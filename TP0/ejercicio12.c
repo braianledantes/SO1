@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>	/* para las funciones system y exit */
 
+const int MAX_LENGHT = 80;
 char palabra [80];
 int tamanioPalabra = 0;
 
@@ -20,25 +21,31 @@ int main() {
 }
 
 void solicitarPalabra() {
-    char letra;
-
-    printf("Ingrese la palabra del ahorcado: \n");
+    char c;
     
     system ("/bin/stty raw");
-    
-    for(int i = 0; i < 79; i++) {
-        letra = getchar();
-        palabra[i] = letra;
-        
-        // si ingresa ENTER termina
-        if(letra == 13) {
+    int i = 0;
+    while(i < MAX_LENGHT - 1) {
+        printf("\r                                                                           ");
+        printf("\rIngrese la palabra del ahorcado: %s", palabra);
+        c = getchar();
+
+        if((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) { // si la letra es valida
+            palabra[i] = c;
+            i++;
+        }
+        else if(c == 127) { // si se borro
+            i--;
+            if (i < 0)
+                i = 0;
+            palabra[i] = 0;
+        }
+        else if(c == 13) { // si se ingresa ENTER termina
             tamanioPalabra = i;
             palabra[i] = 0;
             break;
         }
     }
-    printf("\r                                                                    ");
-    printf("\r                                                                    ");
 
     system ("/bin/stty sane erase ^H");
 
@@ -102,22 +109,23 @@ void jugar() {
 	system ("/bin/stty raw");
 
     do {
-        printf("\r                                                                           ");
+        
 		printf("\rPalabra: %s fallos: %i/%i  ingrese una letra (0 para salir): ", palabraAhorcado, cantFallos, MAX_FALLOS);
         
 		c = getchar();
-
+        if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+        {
+            if (letraAcertada(c))
+                insertarLetra(c);
+            else 
+                cantFallos++;
+        }
+        
         if (c == '0')
             cantFallos = MAX_FALLOS;
         
-        if (letraAcertada(c))
-            insertarLetra(c);
-        else 
-            cantFallos++;
-        
     } while(verificarPalabra() == 0 && cantFallos < MAX_FALLOS);
 
-    printf("\r                                                                           ");
 	printf("\rPalabra: %s fallos: %i/%i  ingrese una letra (0 para salir): ", palabraAhorcado, cantFallos, MAX_FALLOS);
 
 	system ("/bin/stty sane erase ^H");
