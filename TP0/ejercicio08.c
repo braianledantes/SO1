@@ -1,5 +1,5 @@
 /*
-8. Averigüe los tamaños de todos los tipos básicos en su sistema aplicando 
+8. Averigüe los tamaños de todos los tipos básicos en su sistema aplicando
     el operador sizeof().
 */
 /*
@@ -10,11 +10,12 @@ Los tipos básicos son:
 -float (un número en punto flotante)
 -double (un número en punto flotante, doble precisión)
 */
-main () {
-    char a = 'a'; // ------------------------------- 1 byte
-    int b = 1; // ---------------------------------- 4 bytes
-    long c = 111111111; // ------------------------- 8 bytes
-    float d = 1.1; // ------------------------------ 4 bytes 
+main()
+{
+    char a = 'a';                                 // ------------------------------- 1 byte
+    int b = 1;                                    // ---------------------------------- 4 bytes
+    long c = 111111111;                           // ------------------------- 8 bytes
+    float d = 1.1;                                // ------------------------------ 4 bytes
     double e = 11111111111111111.111111111111111; // 8 bytes
 
     printf("char ocupa %d B\n", sizeof(a));
@@ -22,5 +23,4 @@ main () {
     printf("long ocupa %d B\n", sizeof(c));
     printf("float ocupa %d B\n", sizeof(d));
     printf("double ocupa %d B\n", sizeof(e));
-
 }

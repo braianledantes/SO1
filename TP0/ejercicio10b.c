@@ -7,7 +7,8 @@
     c = a / b;
     d = a / c;
 */
-main() {
+main()
+{
     int a, b, c, d;
     a = 1;
     b = 2;

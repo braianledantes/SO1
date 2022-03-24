@@ -127,7 +127,6 @@ void jugar()
 
     do
     {
-
         printf("\rPalabra: %s fallos: %i/%i  ingrese una letra (0 para salir): ", palabraAhorcado, cantFallos, MAX_FALLOS);
 
         c = getchar();
