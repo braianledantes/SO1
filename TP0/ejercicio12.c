@@ -145,6 +145,6 @@ void jugar()
 
     printf("\rPalabra: %s fallos: %i/%i  ingrese una letra (0 para salir): ", palabraAhorcado, cantFallos, MAX_FALLOS);
 
-    system("/bin/stty sane erase ^H");
+    system("/bin/stty sane");
     printf("\n");
 }
