@@ -24,6 +24,5 @@ main()
         Floating point exception+
     */
 
-    // rta: c y d deberian ser como mínimo de tipo flotante
-    // sino el programa muestra una excepcion.
+    // rta: el resultado de c es cero, dividir por cero dá error por ser indefinido.
 }

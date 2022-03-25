@@ -13,16 +13,18 @@
 */
 
 main() {
-    integer a;
-    short i,j,k;
-    long float (h);
-    double long d3;
-    unsigned float n;
-    char 2j;
-    int MY;
-    float ancho, alto, long;
-    bool i;
+    integer a; // mal, integer no es un tipo de dato definido
+    short i,j,k; // bien, queda int como predeterminado
+    long float (h);  // error, por sintaxis los paréntesis no van.
+    double long d3;  // error, el modificador del tipo debe estar antes del tipo.
+    unsigned float n;  // bien, no sé porqué el compilador dá error.
+    char 2j;   // error, nombre de variable incorrecta.
+    int MY;    // correcto.
+    float ancho, alto, long;  // error, long es una palabra reservada para tipo de dato.
+    bool i; // error, no existe tal tipo de dato.
 }
+
+// LO SIGUIENTE ES LO QUE MUESTRA EL COMPILADOR DE C:
 /*
 ejercicio07.c: In function ‘main’:
 ejercicio07.c:16:5: error: unknown type name ‘integer’

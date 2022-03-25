@@ -7,8 +7,8 @@
 
 main()
 {
-    char a = ' ' + 1;
-    unsigned char unA = ' ' + 1;
+    char a;
+    unsigned char unA;
 
     for (int i = 0; i <= 256; i++)
     {

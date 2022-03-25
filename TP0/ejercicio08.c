@@ -12,11 +12,11 @@ Los tipos básicos son:
 */
 main()
 {
-    char a = 'a';                                 // ------------------------------- 1 byte
-    int b = 1;                                    // ---------------------------------- 4 bytes
-    long c = 111111111;                           // ------------------------- 8 bytes
-    float d = 1.1;                                // ------------------------------ 4 bytes
-    double e = 11111111111111111.111111111111111; // 8 bytes
+    char a = 'a';           // 1 byte
+    int b = 1;              // 4 bytes
+    long c = 111111111;     // 8 bytes
+    float d = 1.1;          // 4 bytes
+    double e = 3.14;       // 8 bytes
 
     printf("char ocupa %d B\n", sizeof(a));
     printf("int ocupa %d B\n", sizeof(b));

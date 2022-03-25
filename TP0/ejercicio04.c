@@ -14,5 +14,7 @@ main()
     printf("La letra %c \n", a);
 }
 
-// La diferencia es la interpretación que le dá el compilador al valor que está almacenado en la variable a.
-// El valor numérico de a es 77.
+/* RTA: La diferencia es la interpretación que le dá el compilador al valor que está almacenado en la variable a.
+   Con %i lo interpreta como entero y con %c como caracter.
+   El valor numérico de a es 77.
+*/

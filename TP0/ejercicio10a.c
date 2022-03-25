@@ -19,5 +19,5 @@ main()
     printf("r = a / b\n");
     printf("%f = %i / %i\n", r, a, b);
 
-    // rta: haria falta castear ambos valores, a y b.
+    // rta: haria falta castear alguno de los valores, a ó b.
 }
