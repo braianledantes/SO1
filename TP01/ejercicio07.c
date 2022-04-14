@@ -7,22 +7,23 @@ que le pida al sistema operativo crear un nuevo proceso hijo.
 #include <stdio.h>
 #include <unistd.h>
 
-int main()
+void main()
 {
     /* fork a child process */
     int pid = fork();
 
-    if (pid < 0) /* error occurred */
-    {
+    if (pid < 0)
+    { /* error occurred */
         printf(stderr, "Fork Field\n");
         return 1;
     }
-    else if (pid == 0) /* child process */
-    {
-        execlp("/bin/ls", "ls", NULL);
+    else if (pid == 0)
+    { /* child process */
+        printf("Proceso hijo %d\n", pid);
     }
-    else /* parent process */
-    {
+    else
+    { /* parent process */
+        printf("Proceso padre. Mi hijo es el pid = %d\n", pid);
         wait(NULL);
         printf("Child Complete\n");
     }

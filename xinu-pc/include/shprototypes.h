@@ -79,5 +79,11 @@ extern	shellcmd  xsh_help	(int32, char *[]);
 /* in file mi_programa.c */
 extern shellcmd mi_programa      (void);
 
+/* in file ejer5.c */
+extern shellcmd ejer5      (void);
+
+/* in file ejer6.c */
+extern shellcmd ejer6      (void);
+
 /* in file ahorcado.c */
 extern shellcmd ahorcado      (void);

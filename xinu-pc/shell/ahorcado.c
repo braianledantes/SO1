@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h> /* para las funciones system y exit */
+#include <xinu.h>
 
 const int MAX_LENGHT = 80;
 char palabra[80];
@@ -10,8 +9,10 @@ int cantFallos = 0;
 
 int MAX_FALLOS = 6;
 
-int main()
+int ahorcado()
 {
+    //  modo input en raw
+    control(0, TC_MODER,0 ,0);
     solicitarPalabra();
     jugar();
 }
@@ -20,7 +21,6 @@ void solicitarPalabra()
 {
     char c;
 
-    system("/bin/stty raw");
     int i = 0;
     while (i < MAX_LENGHT - 1)
     {
@@ -48,7 +48,6 @@ void solicitarPalabra()
         }
     }
 
-    system("/bin/stty sane erase ^H");
 
     // copia la palabra en el "pizarron"
     for (int i = 0; i < tamanioPalabra; i++)
@@ -117,9 +116,6 @@ void jugar()
 {
     int c;
 
-    /* Decirle al sistema que el modo input es RAW */
-    system("/bin/stty raw");
-
     do
     {
         printf("\rPalabra: %s fallos: %i/%i  ingrese una letra (0 para salir): ", palabraAhorcado, cantFallos, MAX_FALLOS);
@@ -140,6 +136,6 @@ void jugar()
 
     printf("\rPalabra: %s fallos: %i/%i  ingrese una letra (0 para salir): ", palabraAhorcado, cantFallos, MAX_FALLOS);
 
-    system("/bin/stty sane");
+    // system("/bin/stty sane");
     printf("\n");
 }
