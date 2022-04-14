@@ -14,6 +14,9 @@ process	main(void)
 	print_text_on_vga(10, 200, "Xinu OS for PC with VGA support");
 	print_text_on_vga(10, 220, "Sistemas Operativos I");
 
+	// linea agregada para el ejercicio 2
+	print_text_on_vga(10, 240, "Hola ejercicio 2 \n");
+
 	recvclr();
 	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
 
