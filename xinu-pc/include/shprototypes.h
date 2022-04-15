@@ -87,3 +87,6 @@ extern shellcmd ejer6      (void);
 
 /* in file ahorcado.c */
 extern shellcmd ahorcado      (void);
+
+/* in file tp2ej2.c */
+extern shellcmd tp2ej2      (void);
