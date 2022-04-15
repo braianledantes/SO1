@@ -641,6 +641,15 @@ extern	void	xdone(void);
 /* in file yield.c */
 extern	syscall	yield(void);
 
+/* in file mutex_init.c */
+extern sid32 mutex_init(void);
+
+/* in file mutex_lock.c */
+extern void mutex_lock(sid);
+
+/* in file mutex_unlock.c */
+extern void mutex_unlock(sid);
+
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))
 #define	htonl(x)  ((((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \

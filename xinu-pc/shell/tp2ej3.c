@@ -2,6 +2,8 @@
 #include <xinu.h>
 void operar(void), incrementar(void);
 unsigned char x = 0;
+
+sid32 mutex;
 /*------------------------------------------------------------------------
  * mut -- programa con regiones criticas
  *------------------------------------------------------------------------
@@ -9,6 +11,7 @@ unsigned char x = 0;
 void tp2ej3(void)
 {
     int i;
+    mutex = mutex_init();
     resume(create(operar, 1024, 20, "process 1", 0));
     resume(create(incrementar, 1024, 20, "process 2", 0));
     sleep(10);
@@ -23,6 +26,7 @@ void operar(void)
     printf("Si no existen mensajes de ERROR entonces todo va OK! \n");
     while (1)
     {
+        mutex_lock(mutex);
         /* si x es multiplo de 10 */
         if ((x % 10) == 0)
         {
@@ -33,6 +37,7 @@ void operar(void)
             if ((y % 10) != 0)
                 printf("\r ERROR!! y=%d, x=%d \r", y, x);
         }
+        mutex_unlock(mutex);
     }
 }
 /*------------------------------------------------------------------------
@@ -43,6 +48,8 @@ void incrementar(void)
 {
     while (1)
     {
+        mutex_lock(mutex);
         x = x + 1;
+        mutex_unlock(mutex);
     }
 }
