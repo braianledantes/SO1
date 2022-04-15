@@ -32,7 +32,8 @@ const	struct	cmdent	cmdtab[] = {
 	{"ejer5", FALSE, ejer5},
 	{"ejer6", FALSE, ejer6},
 	{"ahorcado", FALSE, ahorcado},
-	{"tp2ej2", FALSE, tp2ej2}
+	{"tp2ej2", FALSE, tp2ej2},
+	{"tp2ej3", FALSE, tp2ej3}
 };
 
 uint32  ncmd = sizeof(cmdtab) / sizeof(struct cmdent);
