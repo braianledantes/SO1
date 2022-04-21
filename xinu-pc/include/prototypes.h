@@ -645,10 +645,10 @@ extern	syscall	yield(void);
 extern sid32 mutex_init(void);
 
 /* in file mutex_lock.c */
-extern void mutex_lock(sid);
+extern void mutex_lock(sid32);
 
 /* in file mutex_unlock.c */
-extern void mutex_unlock(sid);
+extern void mutex_unlock(sid32);
 
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))
