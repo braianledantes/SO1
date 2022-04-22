@@ -1,6 +1,6 @@
 #include <xinu.h>
 
-void procesoA(void), procesoB(void), procesoC(void);
+void procesoA(void), procesoB(void), procesoC(void), high_level_sheduler(int, int, int, int, int, int);
 
 void tp2ej1(void)
 {
@@ -16,7 +16,8 @@ void tp2ej1(void)
     resume(pid_b);
     resume(pid_c);
 
-    high_level_sheduler(pid_a, 120, pid_b, 60, pid_c, 20);
+    //high_level_sheduler(pid_a, 120, pid_b, 60, pid_c, 20);
+    resume(create(high_level_sheduler, 128, 10, "planificador", 6, pid_a, 120, pid_b, 60, pid_c, 30));
 }
 
 void high_level_sheduler(int pid_a, int ms_a,
@@ -34,7 +35,7 @@ void high_level_sheduler(int pid_a, int ms_a,
     {
         printf("turno al proceso a.\n");
         /* obtener la prioridad del proceso a */
-        prio_process = getprio(pid_a);
+        prio_process = resume(pid_a);
         /* cambiar la prioridad del proceso a, a un valor igual a la
            prioridad del planificar menos 1 */
         chprio(pid_a, prio_pla - 1);
@@ -46,14 +47,14 @@ void high_level_sheduler(int pid_a, int ms_a,
 
         /* planificar aquí el proceso b */
         printf("turno al proceso b.\n");
-        prio_process = getprio(pid_b);
+        prio_process = resume(pid_b);
         chprio(pid_b, prio_pla - 1);
         sleepms(ms_b);
         chprio(pid_b, prio_process);
 
         /* planificar aquí el proceso c */
         printf("turno al proceso c.\n");
-        prio_process = getprio(pid_c);
+        prio_process = resume(pid_c);
         chprio(pid_c, prio_pla - 1);
         sleepms(ms_c);
         chprio(pid_c, prio_process);
