@@ -67,7 +67,6 @@ void procesoA(void)
     while (1)
     {
         a++;
-        //sleepms(10);
         printf("a = %d\n", a);
     }
 }
@@ -78,7 +77,6 @@ void procesoB(void)
     while (1)
     {
         b++;
-        //sleepms(10);
         printf("b = %d\n", b);
     }
 }
@@ -89,7 +87,6 @@ void procesoC(void)
     while (1)
     {
         c++;
-        //sleepms(10);
         printf("c = %d\n", c);
     }
 }
