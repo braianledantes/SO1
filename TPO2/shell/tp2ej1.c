@@ -16,7 +16,6 @@ void tp2ej1(void)
     resume(pid_b);
     resume(pid_c);
 
-    //high_level_sheduler(pid_a, 120, pid_b, 60, pid_c, 20);
     resume(create(high_level_sheduler, 128, 10, "planificador", 6, pid_a, 120, pid_b, 60, pid_c, 30));
 }
 
@@ -67,7 +66,6 @@ void procesoA(void)
     while (1)
     {
         a++;
-        sleepms(10);
         printf("a = %d\n", a);
     }
 }
@@ -78,7 +76,6 @@ void procesoB(void)
     while (1)
     {
         b++;
-        sleepms(10);
         printf("b = %d\n", b);
     }
 }
@@ -89,7 +86,6 @@ void procesoC(void)
     while (1)
     {
         c++;
-        sleepms(10);
         printf("c = %d\n", c);
     }
 }
