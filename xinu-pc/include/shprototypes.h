@@ -96,3 +96,6 @@ extern shellcmd tp2ej2      (int32, char *[]);
 
 /* in file tp2ej3.c */
 extern shellcmd tp2ej3      (int32, char *[]);
+
+/* in file ahorcadoparcial.c */
+extern shellcmd ahorcadoparcial      (int32, char *[]);
