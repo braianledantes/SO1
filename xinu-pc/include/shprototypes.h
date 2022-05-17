@@ -99,3 +99,5 @@ extern shellcmd tp2ej3      (int32, char *[]);
 
 /* in file ahorcadoparcial.c */
 extern shellcmd ahorcadoparcial      (int32, char *[]);
+
+extern shellcmd recuperatorio (int32, char *[]);
