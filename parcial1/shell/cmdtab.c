@@ -28,13 +28,8 @@ const	struct	cmdent	cmdtab[] = {
 	{"udpeserver",	FALSE,	xsh_udpeserver},
 	{"uptime",	FALSE,	xsh_uptime},
 	{"?",		FALSE,	xsh_help},
-	{"programa",    FALSE,  mi_programa},
-	{"ejer5", FALSE, ejer5},
-	{"ejer6", FALSE, ejer6},
-	{"ahorcado", FALSE, ahorcado},
-	{"tp2ej1", FALSE, tp2ej1},
-	{"tp2ej2", FALSE, tp2ej2},
-	{"tp2ej3", FALSE, tp2ej3}
+	{"ahorcadoParcial", FALSE, ahorcadoparcial},
+	{"primos", FALSE, recuperatorio}
 };
 
 uint32  ncmd = sizeof(cmdtab) / sizeof(struct cmdent);
