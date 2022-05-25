@@ -32,16 +32,16 @@ typedef unsigned short u16;
 */
 //#define BUTTONS *(volatile unsigned int *)0x4000130
 
-#define BUTTON_A	0x24
-#define BUTTON_B	0x25 
-#define BUTTON_SELECT	0x03
-#define BUTTON_START	0x2c
-#define BUTTON_RIGHT	0x1f
-#define BUTTON_LEFT	0x1e	
-#define BUTTON_UP	'w'
-#define BUTTON_DOWN 	's'	
-#define BUTTON_R	'1'
-#define BUTTON_L	'2'
+#define BUTTON_A 0x39	   // espace
+#define BUTTON_B 0x21	   // f
+#define BUTTON_SELECT 0x1  // escape
+#define BUTTON_START 0x1c  // enter
+#define BUTTON_RIGHT 0x4d  // right arrow
+#define BUTTON_LEFT 0x4b   // left arrow
+#define BUTTON_UP 0x48     // up arrow
+#define BUTTON_DOWN 0x50   // down arrow
+#define BUTTON_R 0x10      // q
+#define BUTTON_L 0x12      // e
 #define KEY_DOWN_NOW(key)  (tecla_actual == key)
 
 //variable definitions
