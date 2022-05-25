@@ -369,21 +369,20 @@ void endGame()
 	{
 		if (KEY_DOWN_NOW(BUTTON_SELECT))
 		{
-			printf("Presiono select\n");
 			drawBlackScreen();
 			signal(terminar);
 			break;
 		}
 		if (KEY_DOWN_NOW(BUTTON_START))
 		{
-			printf("Presiono start\n");
 			galaga();
 			break;
 		}
 	}
 }
 
-void drawBlackScreen(void) {
+void drawBlackScreen(void)
+{
 	for (int i = 0; i < 240; i++)
 	{
 		for (int j = 0; j < 160; j++)
