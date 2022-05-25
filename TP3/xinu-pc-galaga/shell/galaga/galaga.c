@@ -32,48 +32,50 @@ typedef unsigned short u16;
 */
 //#define BUTTONS *(volatile unsigned int *)0x4000130
 
-#define BUTTON_A 0x39	   // espace
-#define BUTTON_B 0x21	   // f
-#define BUTTON_SELECT 0x1  // escape
-#define BUTTON_START 0x1c  // enter
-#define BUTTON_RIGHT 0x4d  // right arrow
-#define BUTTON_LEFT 0x4b   // left arrow
-#define BUTTON_UP 0x48     // up arrow
-#define BUTTON_DOWN 0x50   // down arrow
-#define BUTTON_R 0x10      // q
-#define BUTTON_L 0x12      // e
-#define KEY_DOWN_NOW(key)  (tecla_actual == key)
+#define BUTTON_A 0x39	  // espace
+#define BUTTON_B 0x21	  // f
+#define BUTTON_SELECT 0x1 // escape
+#define BUTTON_START 0x1c // enter
+#define BUTTON_RIGHT 0x4d // right arrow
+#define BUTTON_LEFT 0x4b  // left arrow
+#define BUTTON_UP 0x48	  // up arrow
+#define BUTTON_DOWN 0x50  // down arrow
+#define BUTTON_R 0x10	  // q
+#define BUTTON_L 0x12	  // e
+#define KEY_DOWN_NOW(key) (tecla_actual == key)
 
-//variable definitions
+// variable definitions
 #define playerspeed 2
 #define enemyspeed 1
 #define fastXSpeed 3
 #define fastYSpeed 2
 
-
 void setPixel(int x, int y, u16 color);
 void drawRect(int x, int y, int width, int height, u16 color);
 void drawHollowRect(int x, int y, int width, int height, u16 color);
-void drawImage3(int x, int y, int width, int height, const u16* image);
+void drawImage3(int x, int y, int width, int height, const u16 *image);
 void delay_galaga();
 void waitForVBlank();
 
-//helpers
+// helpers
 void initialize();
 void drawEnemies();
 void endGame();
 int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playerX, u16 playerY);
 
-//objects
-struct Players {
+// objects
+struct Players
+{
 	volatile u16 playerX;
 	volatile u16 playerY;
 };
-struct Enemy {
+struct Enemy
+{
 	volatile u16 enemyX;
 	volatile u16 enemyY;
 };
-struct FastEnemy {
+struct FastEnemy
+{
 	volatile u16 fastX;
 	volatile u16 fastY;
 };
@@ -153,7 +155,7 @@ void jugador(void)
 		{
 			player.playerY += playerspeed;
 		}
-		
+
 		// agrega disparos al arreglo de disparos
 		if (msg == BUTTON_A)
 		{
@@ -169,7 +171,6 @@ void jugador(void)
 		waitForVBlank();
 		sleepms(50);
 	}
-	
 }
 
 // proceso 3
@@ -178,9 +179,7 @@ void colisionador(void)
 
 	while (1)
 	{
-		
 	}
-
 }
 
 // proceso 4
@@ -206,7 +205,8 @@ void navesYDisparos(void)
 	}
 }
 
-int galaga(void) {
+int galaga(void)
+{
 	// easy enemy wave set setup
 	for (int a = 0; a < 9; a++)
 	{
@@ -261,7 +261,7 @@ int galaga(void) {
 	resume(pid_proceso1);
 	resume(pid_proceso2);
 	resume(pid_proceso3);
-	resume(pid_proceso4);	
+	resume(pid_proceso4);
 	resume(pid_proceso5);
 	terminar = semcreate(0);
 
@@ -269,51 +269,45 @@ int galaga(void) {
 	return 0;
 }
 
-
-int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playerX, u16 playerY) {
-	//check if bottom right corner of enemy is within player
-	if (((enemyX + enemyWidth) > playerX) && ( (enemyY + enemyHeight) 
-		> playerY ) &&  ((enemyX + enemyWidth) < (playerX + 24)) 
-		&& ((enemyY + enemyWidth) < (playerY + 24))) {
-		return 1;
-	} 
-	//check bottom left corner of enemy
-	if ( (enemyX < (playerX + 24)) 
-		&& (enemyX > playerX)
-		&& ((enemyY + enemyHeight) > playerY)
-		&& ((enemyY + enemyHeight) < (playerY + 24))
-		) {
+int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playerX, u16 playerY)
+{
+	// check if bottom right corner of enemy is within player
+	if (((enemyX + enemyWidth) > playerX) && ((enemyY + enemyHeight) > playerY) && ((enemyX + enemyWidth) < (playerX + 24)) && ((enemyY + enemyWidth) < (playerY + 24)))
+	{
 		return 1;
 	}
-	//check top left corner
-	if ( (enemyX < (playerX + 24)) 
-		&& (enemyX > playerX)
-		&& (enemyY > playerY)
-		&& (enemyY < (playerY + 24))
-		) {
+	// check bottom left corner of enemy
+	if ((enemyX < (playerX + 24)) && (enemyX > playerX) && ((enemyY + enemyHeight) > playerY) && ((enemyY + enemyHeight) < (playerY + 24)))
+	{
 		return 1;
-	}	
-	//check top right corner
-	if ( ((enemyX + enemyWidth) < (playerX + 24)) 
-		&& ((enemyX + enemyWidth) > playerX)
-		&& (enemyY > playerY)
-		&& (enemyY < (playerY + 24))
-		) {
+	}
+	// check top left corner
+	if ((enemyX < (playerX + 24)) && (enemyX > playerX) && (enemyY > playerY) && (enemyY < (playerY + 24)))
+	{
 		return 1;
-	}	
+	}
+	// check top right corner
+	if (((enemyX + enemyWidth) < (playerX + 24)) && ((enemyX + enemyWidth) > playerX) && (enemyY > playerY) && (enemyY < (playerY + 24)))
+	{
+		return 1;
+	}
 	return 0;
 }
 
-void endGame() {
+void endGame()
+{
 	receive();
-	//start Game Over State
+	// start Game Over State
 	drawImage3(0, 0, 240, 160, gameover);
 	drawHollowRect(0, 0, 240, 160, WHITE);
-	while(1) {
-		if (KEY_DOWN_NOW(BUTTON_SELECT)) {
+	while (1)
+	{
+		if (KEY_DOWN_NOW(BUTTON_SELECT))
+		{
 			galaga();
 		}
-		if (KEY_DOWN_NOW(BUTTON_START))	{
+		if (KEY_DOWN_NOW(BUTTON_START))
+		{
 			galaga();
 		}
 	}
