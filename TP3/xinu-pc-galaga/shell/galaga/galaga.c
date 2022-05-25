@@ -196,12 +196,11 @@ void colisionador(void)
 			// check hits of shoots
 			for (int j = 0; j < 9; j++)
 			{
-				if (collision(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 15, 15, shoots[i] % 240, shoots[i] / 240))
+				if (j != 0)
 				{
-					if (easyEnemies[j].enemyY != 0)
+					if (collision(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 15, 15, shoots[i] % 240, shoots[i] / 240))
 					{
 						msg = (j << 4) | i;
-						printf("colision %x con %x: %x\n", j, i, msg);
 						send(pid_proceso4, msg);
 					}
 				}
@@ -235,6 +234,7 @@ void navesYDisparos(void)
 		msg = recvclr();
 		if (msg != 1)
 		{
+			// desdibuja el enemigo eliminado
 			j = msg >> 4;
 			i = msg ^ (j << 4);
 
