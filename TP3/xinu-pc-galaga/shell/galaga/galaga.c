@@ -161,7 +161,6 @@ void jugador(void)
 		{
 			if (shoots[curr_shot] == 0)
 			{
-				printf("player (%d, %d)\n", player.playerX, player.playerY);
 				shoots[curr_shot] = (136 - (136 - player.playerY)) * 240 + player.playerX + 9; /* 24 widht player */
 				curr_shot++;
 				if (curr_shot >= N_SHOOTS)
