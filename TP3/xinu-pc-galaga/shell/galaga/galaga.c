@@ -197,6 +197,53 @@ void navesYDisparos(void)
 					shoots[i] = 0;
 			}
 		}
+
+		// draw easy enemies with downward movement
+		for (int a = 0; a < 9; a++)
+		{
+			easyEnemies[a].enemyY += enemyspeed;
+			drawImage3(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, enemy);
+			if (easyEnemies[a].enemyY >= 160)
+			{
+				easyEnemies[a].enemyY = 0;
+			}
+		}
+		// draw hard enemies
+		for (int a = 0; a < 9; a++)
+		{
+			hardEnemies[a].enemyY += enemyspeed;
+			drawImage3(hardEnemies[a].enemyX, hardEnemies[a].enemyY, 20, 20, enemy);
+			if (hardEnemies[a].enemyY >= 228)
+			{
+				hardEnemies[a].enemyY = 0;
+			}
+			if ((hardEnemies[a].enemyY >= 200) && (easyEnemies[a].enemyY <= 45))
+			{
+				hardEnemies[a].enemyY = 160;
+			}
+			// space enemies apart
+			if ((hardEnemies[a].enemyY >= 200) && (easyEnemies[a].enemyY <= 45))
+			{
+				hardEnemies[a].enemyY = 160;
+			}
+			if ((easyEnemies[a].enemyY >= 120) && (hardEnemies[a].enemyY >= 170))
+			{
+				hardEnemies[a].enemyY = 160;
+			}
+		}
+		// draw fast enemy
+		drawImage3(fast.fastX, fast.fastY, 15, 15, boss);
+		drawHollowRect(fast.fastX - 1, fast.fastY - 1, 17, 17, BLACK);
+		drawHollowRect(fast.fastX - 2, fast.fastY - 2, 19, 19, BLACK);
+		if (fast.fastX >= 240)
+		{
+			fast.fastX = 0;
+		}
+		if (fast.fastY >= 200)
+		{
+			fast.fastY = player.playerY - 20;
+		}
+
 		waitForVBlank();
 		sleepms(50);
 	}
