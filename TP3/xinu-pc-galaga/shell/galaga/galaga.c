@@ -410,7 +410,7 @@ void endGame()
 	drawHollowRect(0, 0, 240, 160, WHITE);
 
 	waitForVBlank();
-	sleepms(50);
+	sleepms(1000);
 	while (1)
 	{
 		if (KEY_DOWN_NOW(BUTTON_SELECT))
