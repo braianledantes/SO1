@@ -118,6 +118,8 @@ void teclado(void)
 		{
 			send(pid_proceso2, BUTTON_A);
 		}
+		waitForVBlank();
+		sleepms(50);
 	}
 }
 
@@ -187,7 +189,20 @@ void navesYDisparos(void)
 	umsg32 msg;
 	while (1)
 	{
-		
+		// draw shots
+		for (int i = 0; i < N_SHOOTS; i++)
+		{
+			if (shoots[i] != 0)
+			{
+				drawRect((shoots[i] % 240), (shoots[i] / 240) + 4, 5, 5, BLACK);
+				drawImage3((shoots[i] % 240), (shoots[i] / 240), 5, 5, shoot);
+				shoots[i] = shoots[i] - 240 * 4;
+				if (shoots[i] <= 0)
+					shoots[i] = 0;
+			}
+		}
+		waitForVBlank();
+		sleepms(50);
 	}
 }
 
