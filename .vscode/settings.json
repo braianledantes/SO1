@@ -3,6 +3,7 @@
         "tp2-ejercicio2": "cpp",
         "tp2ej2": "c",
         "tp2ej2-gonza": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "playerimage.h": "c"
     }
 }
