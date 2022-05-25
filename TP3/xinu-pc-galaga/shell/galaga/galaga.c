@@ -179,25 +179,71 @@ void jugador(void)
 // proceso 3
 void colisionador(void)
 {
-	/*umsg32 msg;
+	umsg32 msg;
 	while (1)
 	{
+		// colision con enemigos faciles
 		for (int a = 0; a < 9; a++)
 		{
 			if (collision(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
 			{
-				endGame();
+				send(pid_proceso5, 1);
 			}
 		}
-	}*/
+		// colision con de naves enemigas con disparos
+		for (int i = 0; i < N_SHOOTS; i++)
+		{
+			// check hits of shoots
+			for (int j = 0; j < 9; j++)
+			{
+				if (collision(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 15, 15, shoots[i] % 240, shoots[i] / 240))
+				{
+					if (easyEnemies[j].enemyY != 0)
+					{
+						msg = (j << 4) | i;
+						printf("colision %x con %x: %x\n", j, i, msg);
+						send(pid_proceso4, msg);
+					}
+				}
+			}
+		}
+		// colision con enemnigos dificiles
+		for (int a = 0; a < 9; a++)
+		{
+			if (collision(hardEnemies[a].enemyX, hardEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
+			{
+				send(pid_proceso5, 1);
+			}
+		}
+		// colision con enemigo facil
+		if (collision(fast.fastX, fast.fastY, 15, 15, player.playerX, player.playerY))
+		{
+			send(pid_proceso5, 1);
+		}
+		waitForVBlank();
+		sleepms(50);
+	}
 }
 
 // proceso 4
 void navesYDisparos(void)
 {
 	umsg32 msg;
+	int i, j;
 	while (1)
 	{
+		msg = recvclr();
+		if (msg != 1)
+		{
+			j = msg >> 4;
+			i = msg ^ (j << 4);
+
+			drawRect(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 20, 20, BLACK);
+			drawRect((shoots[i] % 240), (shoots[i] / 240) + 4, 5, 5, BLACK);
+			easyEnemies[j].enemyY = 0;
+			shoots[i] = 0;
+		}
+
 		// draw shots
 		for (int i = 0; i < N_SHOOTS; i++)
 		{
