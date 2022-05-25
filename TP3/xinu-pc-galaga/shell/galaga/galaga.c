@@ -116,9 +116,15 @@ void teclado(void)
 		{
 			send(pid_proceso2, BUTTON_DOWN);
 		}
+		// player shots
 		if (KEY_DOWN_NOW(BUTTON_A))
 		{
 			send(pid_proceso2, BUTTON_A);
+		}
+		// go back to title screen if select button is pressed
+		if (KEY_DOWN_NOW(BUTTON_SELECT))
+		{
+			send(pid_proceso5, BUTTON_SELECT);
 		}
 		waitForVBlank();
 		sleepms(50);
@@ -173,10 +179,17 @@ void jugador(void)
 // proceso 3
 void colisionador(void)
 {
-
+	/*umsg32 msg;
 	while (1)
 	{
-	}
+		for (int a = 0; a < 9; a++)
+		{
+			if (collision(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
+			{
+				endGame();
+			}
+		}
+	}*/
 }
 
 // proceso 4
@@ -274,6 +287,10 @@ int galaga(void)
 	// fast enemy "boss" setup
 	fast.fastX = 0;
 	fast.fastY = 30;
+	for (int i = 0; i < N_SHOOTS; i++)
+	{
+		shoots[i] = 0;
+	}
 
 	// REG_DISPCNT = MODE3 | BG2_ENABLE;
 	// initalize title screen
@@ -288,13 +305,7 @@ int galaga(void)
 		}
 	}
 	// start black screen for drawing
-	for (int i = 0; i < 240; i++)
-	{
-		for (int j = 0; j < 160; j++)
-		{
-			setPixel(i, j, BLACK);
-		}
-	}
+	drawBlackScreen();
 
 	// Iniciar los procesos
 	pid_proceso1 = create(teclado, 1024, 20, "teclado", 0);
@@ -338,22 +349,46 @@ int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playe
 	return 0;
 }
 
+// proceso 5
 void endGame()
 {
 	receive();
+
+	kill(pid_proceso1);
+	kill(pid_proceso2);
+	kill(pid_proceso3);
+	kill(pid_proceso4);
+
 	// start Game Over State
 	drawImage3(0, 0, 240, 160, gameover);
 	drawHollowRect(0, 0, 240, 160, WHITE);
+
+	waitForVBlank();
+	sleepms(50);
 	while (1)
 	{
 		if (KEY_DOWN_NOW(BUTTON_SELECT))
 		{
-			galaga();
+			printf("Presiono select\n");
+			drawBlackScreen();
+			signal(terminar);
+			break;
 		}
 		if (KEY_DOWN_NOW(BUTTON_START))
 		{
+			printf("Presiono start\n");
 			galaga();
+			break;
 		}
 	}
-	signal(terminar);
+}
+
+void drawBlackScreen(void) {
+	for (int i = 0; i < 240; i++)
+	{
+		for (int j = 0; j < 160; j++)
+		{
+			setPixel(i, j, BLACK);
+		}
+	}
 }
