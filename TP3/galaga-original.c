@@ -1,4 +1,3 @@
-#include <xinu.h>
 
 #include "titlescreen.h"
 #include "playerImage.h"
@@ -32,16 +31,16 @@ typedef unsigned short u16;
 */
 //#define BUTTONS *(volatile unsigned int *)0x4000130
 
-#define BUTTON_A 0x39	   // espace
-#define BUTTON_B 0x21	   // f
-#define BUTTON_SELECT 0x1  // escape
-#define BUTTON_START 0x1c  // enter
-#define BUTTON_RIGHT 0x4d  // right arrow
-#define BUTTON_LEFT 0x4b   // left arrow
-#define BUTTON_UP 0x48     // up arrow
-#define BUTTON_DOWN 0x50   // down arrow
-#define BUTTON_R 0x10      // q
-#define BUTTON_L 0x12      // e
+#define BUTTON_A 0x24
+#define BUTTON_B 0x25
+#define BUTTON_SELECT 0x03
+#define BUTTON_START 0x2c
+#define BUTTON_RIGHT 0x1f
+#define BUTTON_LEFT 0x1e
+#define BUTTON_UP 'w'
+#define BUTTON_DOWN 's'
+#define BUTTON_R '1'
+#define BUTTON_L '2'
 #define KEY_DOWN_NOW(key) (tecla_actual == key)
 
 // variable definitions
@@ -84,81 +83,65 @@ int shoots[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int curr_shot = 0;
 #define N_SHOOTS 10
 
-pid32 pid_proceso1, pid_proceso2, pid_proceso3, pid_proceso4, pid_proceso5;
-sid32 terminar, mutex;
-
-struct Enemy easyEnemies[9];
-struct Enemy hardEnemies[9];
-struct Players player;
-struct FastEnemy fast;
-
-void teclado(void), jugador(void), colisionador(void), navesYDisparos(void);
-
-// proceso 1
-void teclado(void)
+int galaga(void)
 {
-	while (1)
+	// easy enemy wave set setup
+	struct Enemy easyEnemies[9];
+	for (int a = 0; a < 9; a++)
 	{
-		// player movement input
-		if (KEY_DOWN_NOW(BUTTON_LEFT))
-		{
-			send(pid_proceso2, BUTTON_LEFT);
-		}
-		if (KEY_DOWN_NOW(BUTTON_RIGHT))
-		{
-			send(pid_proceso2, BUTTON_RIGHT);
-		}
-		if (KEY_DOWN_NOW(BUTTON_UP))
-		{
-			send(pid_proceso2, BUTTON_UP);
-		}
-		if (KEY_DOWN_NOW(BUTTON_DOWN))
-		{
-			send(pid_proceso2, BUTTON_DOWN);
-		}
-		if (KEY_DOWN_NOW(BUTTON_A))
-		{
-			send(pid_proceso2, BUTTON_A);
-		}
-		
-		waitForVBlank();
-		sleepms(50);
+		easyEnemies[a].enemyX = (28 * a);
+		easyEnemies[a].enemyY = 0;
 	}
-}
+	easyEnemies[1].enemyX = 240;
+	easyEnemies[4].enemyX = 240;
+	easyEnemies[8].enemyX = 240;
+	// difficult enemies setup
+	struct Enemy hardEnemies[9];
+	for (int a = 0; a < 9; a++)
+	{
+		hardEnemies[a].enemyX = (28 * a);
+		hardEnemies[a].enemyY = 160;
+	}
+	hardEnemies[3].enemyX = 240;
+	hardEnemies[6].enemyX = 240;
+	// player setup
+	struct Players player;
+	player.playerX = 120;
+	player.playerY = 136;
+	// fast enemy "boss" setup
+	struct FastEnemy fast;
+	fast.fastX = 0;
+	fast.fastY = 30;
 
-// proceso 2
-void jugador(void)
-{
-	umsg32 msg = 0;
+	// REG_DISPCNT = MODE3 | BG2_ENABLE;
+	// initalize title screen
+	print_text_on_vga(10, 20, "GALAGA ");
+	drawImage3(0, 0, 240, 160, titlescreen);
 	while (1)
 	{
-		// draw player
-		drawImage3(player.playerX, player.playerY, 24, 24, playerImage);
-		drawHollowRect(player.playerX - 1, player.playerY - 1, 26, 26, BLACK);
-		drawHollowRect(player.playerX - 2, player.playerY - 2, 28, 28, BLACK);
-
-		msg = receive();
-
-		// player movement input
-		if (msg == BUTTON_LEFT && (player.playerX > 0))
+		if (KEY_DOWN_NOW(BUTTON_START))
 		{
-			player.playerX -= playerspeed;
+			break;
 		}
-		if (msg == BUTTON_RIGHT && (player.playerX <= 216))
+	}
+	// start black screen for drawing
+	for (int i = 0; i < 240; i++)
+	{
+		for (int j = 0; j < 160; j++)
 		{
-			player.playerX += playerspeed;
+			setPixel(i, j, BLACK);
 		}
-		if (msg == BUTTON_UP && (player.playerY > 25))
+	}
+	while (1)
+	{
+		// go back to title screen if select button is pressed
+		if (KEY_DOWN_NOW(BUTTON_SELECT))
 		{
-			player.playerY -= playerspeed;
+			// initialize();
+			galaga();
 		}
-		if (msg == BUTTON_DOWN && (player.playerY <= 136))
-		{
-			player.playerY += playerspeed;
-		}
-		
-		// agrega disparos al arreglo de disparos
-		if (msg == BUTTON_A)
+		// player shots
+		if (KEY_DOWN_NOW(BUTTON_A))
 		{
 			if (shoots[curr_shot] == 0)
 			{
@@ -168,68 +151,42 @@ void jugador(void)
 					curr_shot = 0;
 			};
 		}
-	}
-	
-}
-
-// proceso 3
-void colisionador(void)
-{
-
-	while (1)
-	{
-		for (int i = 0; i < N_SHOOTS; i++)
+		// player movement input
+		if (KEY_DOWN_NOW(BUTTON_LEFT) && (player.playerX > 0))
 		{
-			// check hits of shoots con los enemigos
-			for (int j = 0; j < 9; j++)
-			{
-				if (collision(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 15, 15, shoots[i] % 240, shoots[i] / 240))
-				{
-					unsigned int posNave = j;
-					unsigned int posDisparo = i;
-
-					printf("colision en %d con %d\n", posNave, posDisparo);
-
-					send(pid_proceso4, 1);
-				}
-			}
+			player.playerX -= playerspeed;
 		}
-
-		// detecta colisiones del jugador con los enemigos
-		for (int a = 0; a < 9; a++) {
-			if (collision(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, player.playerX, player.playerY)) {
-				send(pid_proceso5, 1);
-			}		
+		if (KEY_DOWN_NOW(BUTTON_RIGHT) && (player.playerX <= 216))
+		{
+			player.playerX += playerspeed;
 		}
+		if (KEY_DOWN_NOW(BUTTON_UP) && (player.playerY > 25))
+		{
+			player.playerY -= playerspeed;
+		}
+		if (KEY_DOWN_NOW(BUTTON_DOWN) && (player.playerY <= 136))
+		{
+			player.playerY += playerspeed;
+		}
+		waitForVBlank();
+		sleepms(50);
+		// draw player
+		drawImage3(player.playerX, player.playerY, 24, 24, playerImage);
+		drawHollowRect(player.playerX - 1, player.playerY - 1, 26, 26, BLACK);
+		drawHollowRect(player.playerX - 2, player.playerY - 2, 28, 28, BLACK);
+		// draw easy enemies with downward movement
 		for (int a = 0; a < 9; a++)
 		{
-			if (collision(hardEnemies[a].enemyX, hardEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
-			{
-				send(pid_proceso5, 1);
-			}
-		}
-
-		if (collision(fast.fastX, fast.fastY, 15, 15, player.playerX, player.playerY))
-		{
-			send(pid_proceso5, 1);
-		}
-	}
-
-}
-
-// proceso 4
-void navesYDisparos(void)
-{
-	umsg32 msg = 9999;
-	while (1)
-	{
-		//draw easy enemies with downward movement
-		for (int a = 0; a < 9; a++) {
 			easyEnemies[a].enemyY += enemyspeed;
 			drawImage3(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, enemy);
-			if (easyEnemies[a].enemyY >= 160) {
+			if (collision(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
+			{
+				endGame();
+			}
+			if (easyEnemies[a].enemyY >= 160)
+			{
 				easyEnemies[a].enemyY = 0;
-			}		
+			}
 		}
 
 		// draw shots
@@ -243,30 +200,29 @@ void navesYDisparos(void)
 				if (shoots[i] <= 0)
 					shoots[i] = 0;
 			}
-		}
 
-		msg = recvclr();// como se hace para que no se bloquee, que detecte una colision sin dejar de dibujar
-
-		if (msg != OK)
-		{
-			printf("mensaje de colision: %d \n", msg);
-			/*wait(mutex);
-			// si es easyEnemy
-			if (tipoNave == 1)
+			// check hits of shoots
+			for (int j = 0; j < 9; j++)
 			{
-				drawRect(easyEnemies[posNave].enemyX, easyEnemies[posNave].enemyY, 20, 20, BLACK);
-				drawRect((shoots[posDisparo] % 240), (shoots[posDisparo] / 240) + 4, 5, 5, BLACK);
-				easyEnemies[posNave].enemyY = 0;
-				shoots[posDisparo] = 0;
+				if (collision(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 15, 15, shoots[i] % 240, shoots[i] / 240))
+				{
+					drawRect(easyEnemies[j].enemyX, easyEnemies[j].enemyY, 20, 20, BLACK);
+					drawRect((shoots[i] % 240), (shoots[i] / 240) + 4, 5, 5, BLACK);
+					easyEnemies[j].enemyY = 0;
+					shoots[i] = 0;
+				}
 			}
-			
-			signal(mutex);*/
 		}
+
 		// draw hard enemies
 		for (int a = 0; a < 9; a++)
 		{
 			hardEnemies[a].enemyY += enemyspeed;
 			drawImage3(hardEnemies[a].enemyX, hardEnemies[a].enemyY, 20, 20, enemy);
+			if (collision(hardEnemies[a].enemyX, hardEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
+			{
+				endGame();
+			}
 			if (hardEnemies[a].enemyY >= 228)
 			{
 				hardEnemies[a].enemyY = 0;
@@ -289,7 +245,10 @@ void navesYDisparos(void)
 		drawImage3(fast.fastX, fast.fastY, 15, 15, boss);
 		drawHollowRect(fast.fastX - 1, fast.fastY - 1, 17, 17, BLACK);
 		drawHollowRect(fast.fastX - 2, fast.fastY - 2, 19, 19, BLACK);
-
+		if (collision(fast.fastX, fast.fastY, 15, 15, player.playerX, player.playerY))
+		{
+			endGame();
+		}
 		// RAFA		fast.fastX += fastXSpeed;
 		// RAFA		fast.fastY += fastYSpeed;
 		if (fast.fastX >= 240)
@@ -300,83 +259,8 @@ void navesYDisparos(void)
 		{
 			fast.fastY = player.playerY - 20;
 		}
-		
-		waitForVBlank();
-		sleepms(50);
-
 	}
-}
-
-
-int galaga(void)
-{
-	initialize();
-	
-	// Iniciar los procesos
-	pid_proceso1 = create(teclado, 1024, 20, "teclado", 0);
-	pid_proceso2 = create(jugador, 1024, 20, "jugador", 0);
-	pid_proceso3 = create(colisionador, 1024, 20, "colisionador", 0);
-	pid_proceso4 = create(navesYDisparos, 1024, 20, "navesYDisparos", 0);
-	pid_proceso5 = create(endGame, 1024, 20, "endGame", 0);
-	terminar = semcreate(0);
-	mutex = semcreate(1); // hay que reemplazarlo con manejo de bits en el mensaje
-	resume(pid_proceso1);
-	resume(pid_proceso2);
-	resume(pid_proceso3);
-	resume(pid_proceso4);	
-	resume(pid_proceso5);	
-
-	// finaliza el juego
-	wait(terminar);
 	return 0;
-}
-
-void initialize(void)
-{
-	// easy enemy wave set setup
-	for (int a = 0; a < 9; a++)
-	{
-		easyEnemies[a].enemyX = (28 * a);
-		easyEnemies[a].enemyY = 0;
-	}
-	easyEnemies[1].enemyX = 240;
-	easyEnemies[4].enemyX = 240;
-	easyEnemies[8].enemyX = 240;
-	// difficult enemies setup
-	for (int a = 0; a < 9; a++)
-	{
-		hardEnemies[a].enemyX = (28 * a);
-		hardEnemies[a].enemyY = 160;
-	}
-	hardEnemies[3].enemyX = 240;
-	hardEnemies[6].enemyX = 240;
-	// player setup
-	player.playerX = 120;
-	player.playerY = 136;
-	// fast enemy "boss" setup
-	fast.fastX = 0;
-	fast.fastY = 30;
-
-	// REG_DISPCNT = MODE3 | BG2_ENABLE;
-	// initalize title screen
-	print_text_on_vga(10, 20, "GALAGA ");
-	drawImage3(0, 0, 240, 160, titlescreen);
-
-	while (1)
-	{
-		if (KEY_DOWN_NOW(BUTTON_START))
-		{
-			break;
-		}
-	}
-	// start black screen for drawing
-	for (int i = 0; i < 240; i++)
-	{
-		for (int j = 0; j < 160; j++)
-		{
-			setPixel(i, j, BLACK);
-		}
-	}
 }
 
 int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playerX, u16 playerY)
@@ -404,17 +288,19 @@ int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playe
 	return 0;
 }
 
-// proceso 5
-void endGame(void)
+void endGame()
 {
-	//start Game Over State
+	// start Game Over State
 	drawImage3(0, 0, 240, 160, gameover);
 	drawHollowRect(0, 0, 240, 160, WHITE);
-	while(1) {
-		if (KEY_DOWN_NOW(BUTTON_SELECT)) {
+	while (1)
+	{
+		if (KEY_DOWN_NOW(BUTTON_SELECT))
+		{
 			galaga();
 		}
-		if (KEY_DOWN_NOW(BUTTON_START))	{
+		if (KEY_DOWN_NOW(BUTTON_START))
+		{
 			galaga();
 		}
 	}

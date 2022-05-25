@@ -32,16 +32,16 @@ typedef unsigned short u16;
 */
 //#define BUTTONS *(volatile unsigned int *)0x4000130
 
-#define BUTTON_A 0x39	   // espace
-#define BUTTON_B 0x21	   // f
-#define BUTTON_SELECT 0x1  // escape
-#define BUTTON_START 0x1c  // enter
-#define BUTTON_RIGHT 0x4d  // right arrow
-#define BUTTON_LEFT 0x4b   // left arrow
-#define BUTTON_UP 0x48     // up arrow
-#define BUTTON_DOWN 0x50   // down arrow
-#define BUTTON_R 0x10      // q
-#define BUTTON_L 0x12      // e
+#define BUTTON_A 0x39	  // espace
+#define BUTTON_B 0x21	  // f
+#define BUTTON_SELECT 0x1 // escape
+#define BUTTON_START 0x1c // enter
+#define BUTTON_RIGHT 0x4d // right arrow
+#define BUTTON_LEFT 0x4b  // left arrow
+#define BUTTON_UP 0x48	  // up arrow
+#define BUTTON_DOWN 0x50  // down arrow
+#define BUTTON_R 0x10	  // q
+#define BUTTON_L 0x12	  // e
 #define KEY_DOWN_NOW(key) (tecla_actual == key)
 
 // variable definitions
@@ -120,7 +120,7 @@ void teclado(void)
 		{
 			send(pid_proceso2, BUTTON_A);
 		}
-		
+
 		waitForVBlank();
 		sleepms(50);
 	}
@@ -156,7 +156,7 @@ void jugador(void)
 		{
 			player.playerY += playerspeed;
 		}
-		
+
 		// agrega disparos al arreglo de disparos
 		if (msg == BUTTON_A)
 		{
@@ -169,7 +169,6 @@ void jugador(void)
 			};
 		}
 	}
-	
 }
 
 // proceso 3
@@ -196,10 +195,12 @@ void colisionador(void)
 		}
 
 		// detecta colisiones del jugador con los enemigos
-		for (int a = 0; a < 9; a++) {
-			if (collision(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, player.playerX, player.playerY)) {
+		for (int a = 0; a < 9; a++)
+		{
+			if (collision(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, player.playerX, player.playerY))
+			{
 				send(pid_proceso5, 1);
-			}		
+			}
 		}
 		for (int a = 0; a < 9; a++)
 		{
@@ -214,7 +215,6 @@ void colisionador(void)
 			send(pid_proceso5, 1);
 		}
 	}
-
 }
 
 // proceso 4
@@ -223,13 +223,15 @@ void navesYDisparos(void)
 	umsg32 msg = 9999;
 	while (1)
 	{
-		//draw easy enemies with downward movement
-		for (int a = 0; a < 9; a++) {
+		// draw easy enemies with downward movement
+		for (int a = 0; a < 9; a++)
+		{
 			easyEnemies[a].enemyY += enemyspeed;
 			drawImage3(easyEnemies[a].enemyX, easyEnemies[a].enemyY, 20, 20, enemy);
-			if (easyEnemies[a].enemyY >= 160) {
+			if (easyEnemies[a].enemyY >= 160)
+			{
 				easyEnemies[a].enemyY = 0;
-			}		
+			}
 		}
 
 		// draw shots
@@ -245,7 +247,7 @@ void navesYDisparos(void)
 			}
 		}
 
-		msg = recvclr();// como se hace para que no se bloquee, que detecte una colision sin dejar de dibujar
+		msg = recvclr(); // como se hace para que no se bloquee, que detecte una colision sin dejar de dibujar
 
 		if (msg != OK)
 		{
@@ -259,7 +261,7 @@ void navesYDisparos(void)
 				easyEnemies[posNave].enemyY = 0;
 				shoots[posDisparo] = 0;
 			}
-			
+
 			signal(mutex);*/
 		}
 		// draw hard enemies
@@ -300,18 +302,16 @@ void navesYDisparos(void)
 		{
 			fast.fastY = player.playerY - 20;
 		}
-		
+
 		waitForVBlank();
 		sleepms(50);
-
 	}
 }
-
 
 int galaga(void)
 {
 	initialize();
-	
+
 	// Iniciar los procesos
 	pid_proceso1 = create(teclado, 1024, 20, "teclado", 0);
 	pid_proceso2 = create(jugador, 1024, 20, "jugador", 0);
@@ -323,8 +323,8 @@ int galaga(void)
 	resume(pid_proceso1);
 	resume(pid_proceso2);
 	resume(pid_proceso3);
-	resume(pid_proceso4);	
-	resume(pid_proceso5);	
+	resume(pid_proceso4);
+	resume(pid_proceso5);
 
 	// finaliza el juego
 	wait(terminar);
@@ -407,14 +407,17 @@ int collision(u16 enemyX, u16 enemyY, u16 enemyWidth, u16 enemyHeight, u16 playe
 // proceso 5
 void endGame(void)
 {
-	//start Game Over State
+	// start Game Over State
 	drawImage3(0, 0, 240, 160, gameover);
 	drawHollowRect(0, 0, 240, 160, WHITE);
-	while(1) {
-		if (KEY_DOWN_NOW(BUTTON_SELECT)) {
+	while (1)
+	{
+		if (KEY_DOWN_NOW(BUTTON_SELECT))
+		{
 			galaga();
 		}
-		if (KEY_DOWN_NOW(BUTTON_START))	{
+		if (KEY_DOWN_NOW(BUTTON_START))
+		{
 			galaga();
 		}
 	}
