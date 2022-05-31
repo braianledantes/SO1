@@ -50,6 +50,9 @@ typedef unsigned short u16;
 #define fastXSpeed 3
 #define fastYSpeed 2
 
+#define CONTINUAR 1
+#define FINALIZAR -1
+
 void setPixel(int x, int y, u16 color);
 void drawRect(int x, int y, int width, int height, u16 color);
 void drawHollowRect(int x, int y, int width, int height, u16 color);
@@ -84,8 +87,9 @@ int shoots[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int curr_shot = 0;
 #define N_SHOOTS 10
 
-pid32 pid_proceso1, pid_proceso2, pid_proceso3, pid_proceso4, pid_proceso5;
-sid32 terminar;
+pid32 pid_proceso1, pid_proceso2, pid_proceso3, pid_proceso4, pid_proceso5, pid_galaga;
+int continuar; // para reiniciar o finalizar el juego
+sid32 sem_continuar; // indica al proceso galaga si tiene que reiniciar o finalizar el juego
 
 struct Enemy easyEnemies[9];
 struct Enemy hardEnemies[9];
@@ -98,13 +102,11 @@ char tecla_presionada;
 // proceso 1
 void teclado(void)
 {
-	open(KEYBOARD,0,0);
-
-    
+	open(KEYBOARD, 0, 0);
 	while (recvclr() == OK)
 	{
 		// tecla_presionada = getc(KEYBOARD);
-        read(KEYBOARD, &tecla_presionada, 1);
+		read(KEYBOARD, &tecla_presionada, 1);
 
 		// player movement input
 		if (tecla_presionada == BUTTON_LEFT)
@@ -133,9 +135,7 @@ void teclado(void)
 		{
 			send(pid_proceso5, BUTTON_SELECT);
 		}
-		// waitForVBlank();
-		// sleepms(50);
-	}	
+	}
 	close(KEYBOARD);
 }
 
@@ -181,8 +181,6 @@ void jugador(void)
 					curr_shot = 0;
 			};
 		}
-		//waitForVBlank();
-		//sleepms(50);
 	}
 }
 
@@ -200,7 +198,7 @@ void colisionador(void)
 				send(pid_proceso5, 1);
 			}
 		}
-		// colision con de naves enemigas con disparos
+		// colision de naves enemigas con disparos
 		for (int i = 0; i < N_SHOOTS; i++)
 		{
 			// check hits of shoots
@@ -229,8 +227,6 @@ void colisionador(void)
 		{
 			send(pid_proceso5, 1);
 		}
-		// waitForVBlank();
-		// sleepms(50);
 	}
 }
 
@@ -320,67 +316,73 @@ void navesYDisparos(void)
 
 int galaga(void)
 {
-	// easy enemy wave set setup
-	for (int a = 0; a < 9; a++)
-	{
-		easyEnemies[a].enemyX = (28 * a);
-		easyEnemies[a].enemyY = 0;
-	}
-	easyEnemies[1].enemyX = 240;
-	easyEnemies[4].enemyX = 240;
-	easyEnemies[8].enemyX = 240;
-	// difficult enemies setup
-	for (int a = 0; a < 9; a++)
-	{
-		hardEnemies[a].enemyX = (28 * a);
-		hardEnemies[a].enemyY = 160;
-	}
-	hardEnemies[3].enemyX = 240;
-	hardEnemies[6].enemyX = 240;
-	// player setup
-	player.playerX = 120;
-	player.playerY = 136;
-	// fast enemy "boss" setup
-	fast.fastX = 0;
-	fast.fastY = 30;
-	for (int i = 0; i < N_SHOOTS; i++)
-	{
-		shoots[i] = 0;
-	}
+	pid_galaga = getpid();
+	sem_continuar = semcreate(0);
 
 	// REG_DISPCNT = MODE3 | BG2_ENABLE;
 	// initalize title screen
 	print_text_on_vga(10, 20, "GALAGA ");
 	drawImage3(0, 0, 240, 160, titlescreen);
 
-	open(KEYBOARD, 0, 0);
-	while (1)
+	do
 	{
-		tecla_presionada = getc(KEYBOARD);
-		if (tecla_presionada == BUTTON_START)
+		// easy enemy wave set setup
+		for (int a = 0; a < 9; a++)
 		{
-			break;
+			easyEnemies[a].enemyX = (28 * a);
+			easyEnemies[a].enemyY = 0;
 		}
-	}
-	close(KEYBOARD);
+		easyEnemies[1].enemyX = 240;
+		easyEnemies[4].enemyX = 240;
+		easyEnemies[8].enemyX = 240;
+		// difficult enemies setup
+		for (int a = 0; a < 9; a++)
+		{
+			hardEnemies[a].enemyX = (28 * a);
+			hardEnemies[a].enemyY = 160;
+		}
+		hardEnemies[3].enemyX = 240;
+		hardEnemies[6].enemyX = 240;
+		// player setup
+		player.playerX = 120;
+		player.playerY = 136;
+		// fast enemy "boss" setup
+		fast.fastX = 0;
+		fast.fastY = 30;
+		for (int i = 0; i < N_SHOOTS; i++)
+		{
+			shoots[i] = 0;
+		}
 
-	// start black screen for drawing
-	drawBlackScreen();
+		open(KEYBOARD, 0, 0);
+		while (1)
+		{
+			read(KEYBOARD, &tecla_presionada, 1);
+			if (tecla_presionada == BUTTON_START)
+			{
+				break;
+			}
+		}
+		close(KEYBOARD);
 
-	// Iniciar los procesos
-	pid_proceso1 = create(teclado, 1024, 20, "teclado", 0);
-	pid_proceso2 = create(jugador, 1024, 20, "jugador", 0);
-	pid_proceso3 = create(colisionador, 1024, 20, "colisionador", 0);
-	pid_proceso4 = create(navesYDisparos, 1024, 20, "navesYDisparos", 0);
-	pid_proceso5 = create(endGame, 1024, 20, "endGame", 0);
-	resume(pid_proceso1);
-	resume(pid_proceso2);
-	resume(pid_proceso3);
-	resume(pid_proceso4);
-	resume(pid_proceso5);
-	terminar = semcreate(0);
+		// start black screen for drawing
+		drawBlackScreen();
 
-	wait(terminar);
+		// Iniciar los procesos
+		pid_proceso1 = create(teclado, 1024, 20, "teclado", 0);
+		pid_proceso2 = create(jugador, 1024, 20, "jugador", 0);
+		pid_proceso3 = create(colisionador, 1024, 20, "colisionador", 0);
+		pid_proceso4 = create(navesYDisparos, 1024, 20, "navesYDisparos", 0);
+		pid_proceso5 = create(endGame, 1024, 20, "endGame", 0);
+		resume(pid_proceso1);
+		resume(pid_proceso2);
+		resume(pid_proceso3);
+		resume(pid_proceso4);
+		resume(pid_proceso5);
+
+		wait(sem_continuar);
+	} while (continuar == CONTINUAR);
+
 	return 0;
 }
 
@@ -429,16 +431,21 @@ void endGame()
 	open(KEYBOARD, 0, 0);
 	while (1)
 	{
-		tecla_presionada = getc(KEYBOARD);
+		read(KEYBOARD, &tecla_presionada, 1);
+		// enter presionado
+		if (tecla_presionada == BUTTON_START)
+		{
+			send(pid_galaga, CONTINUAR);
+			continuar = CONTINUAR;
+			signal(sem_continuar);
+			break;
+		}
+		// escape precionado
 		if (tecla_presionada == BUTTON_SELECT)
 		{
 			drawBlackScreen();
-			signal(terminar);
-			break;
-		}
-		if (tecla_presionada == BUTTON_START)
-		{
-			galaga();
+			continuar = FINALIZAR;
+			signal(sem_continuar);
 			break;
 		}
 	}
