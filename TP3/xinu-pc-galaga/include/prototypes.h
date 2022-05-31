@@ -623,6 +623,7 @@ extern devcall kbdinit ( struct dentry        *devptr);
 extern devcall kbdopen ( struct       dentry  *devptr, char   *name, char     *mode);
 extern devcall kbdread ( struct dentry        *devptr, char          *buffer, uint32        count  );
 extern devcall kbdwrite ( struct dentry       *devptr, char *buffer, uint32        count);
+extern unsigned char kbdgetc(struct	dentry	*devptr);
 extern	interrupt	kbdhandlerirq(void);
 
 

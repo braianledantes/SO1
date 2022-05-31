@@ -1,10 +1,10 @@
 /* kbdinit.c  -  kbdinit */
 
 #include <xinu.h>
-#include <keyboard.h>
 
 unsigned char kblayout [128];  // { ... } Fill your layout yourself 
 
+struct kbd_data kbd;
 
 void keyboard_wait(byte a_type) //unsigned char
 {
@@ -81,6 +81,13 @@ devcall	kbdinit (
 	set_evec(1 + IRQBASE, (uint32)kbdhandlerirq);
 	//outportb(0x64, 0xF4);
 	//keyboard_read();  //Acknowledge
+
+	// init el keyboard
+	kbd.pid = NONE_PROCESS;
+	kbd.mutex = semcreate(1);
+	kbd.sem_buffer = semcreate(0);
+    kbd.head = 0;
+    kbd.tail = 0;
 
 	return OK;
 }

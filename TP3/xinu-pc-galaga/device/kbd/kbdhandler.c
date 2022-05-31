@@ -3,7 +3,8 @@
 /* kbdhandler.c - kbdhandler */
 
 #include <xinu.h>
-#include <keyboard.h>
+
+struct kbd_data kbd;
 
 unsigned char tecla_actual;
 
@@ -41,5 +42,14 @@ void kbdhandler(void)
 		} else {  
 		}     
 	}
+
+	if (kbd.head != (kbd.tail + 1) % KEYBORD_BUFFER_LENGTH)
+	{
+		kbd.buffer[kbd.tail] = scancode;
+		
+		kbd.tail = (kbd.tail + 1) % KEYBORD_BUFFER_LENGTH;
+		signal(kbd.sem_buffer);
+	}
+	
 }
 

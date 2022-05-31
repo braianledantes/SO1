@@ -13,5 +13,15 @@ devcall	kbdread (
           uint32        count           /* Length of buffer             */
 	)
 {
-	return OK;
+	if (getpid() == kbd.pid)
+	{
+		for (uint32 i = 0; i < count; i++)
+		{
+			buffer[i] = getc(KEYBOARD);
+		}
+		
+		return OK;
+	}
+	
+	return SYSERR;
 }
