@@ -29,8 +29,6 @@ void kbdhandler(void)
 
 	scancode = get_scancode();
 	tecla_actual = scancode;
-	sprintf(t, "kbd: 0x%x     ", scancode);
-	print_text_on_vga(10, 300, t);
 
 	if(scancode == 0x2A) {
 		shift_key = 1;//Shift key is pressed
