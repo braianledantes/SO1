@@ -42,7 +42,7 @@ typedef unsigned short u16;
 #define BUTTON_DOWN 0x50  // down arrow
 #define BUTTON_R 0x10	  // q
 #define BUTTON_L 0x12	  // e
-#define KEY_DOWN_NOW(key) (tecla_actual == key)
+//#define KEY_DOWN_NOW(key) (tecla_actual == key)
 
 // variable definitions
 #define playerspeed 2
@@ -97,40 +97,46 @@ struct Players player;
 struct FastEnemy fast;
 
 void teclado(void), jugador(void), colisionador(void), navesYDisparos(void);
+char tecla_presionada;
 
 // proceso 1
 void teclado(void)
 {
+	open(KEYBOARD, 0, 0);
 	while (recvclr() == OK)
 	{
+		// tecla_presionada = getc(KEYBOARD);
+		read(KEYBOARD, &tecla_presionada, 1);
+
 		// player movement input
-		if (KEY_DOWN_NOW(BUTTON_LEFT))
+		if (tecla_presionada == BUTTON_LEFT)
 		{
 			send(pid_proceso2, BUTTON_LEFT);
 		}
-		if (KEY_DOWN_NOW(BUTTON_RIGHT))
+		if (tecla_presionada == BUTTON_RIGHT)
 		{
 			send(pid_proceso2, BUTTON_RIGHT);
 		}
-		if (KEY_DOWN_NOW(BUTTON_UP))
+		if (tecla_presionada == BUTTON_UP)
 		{
 			send(pid_proceso2, BUTTON_UP);
 		}
-		if (KEY_DOWN_NOW(BUTTON_DOWN))
+		if (tecla_presionada == BUTTON_DOWN)
 		{
 			send(pid_proceso2, BUTTON_DOWN);
 		}
 		// player shots
-		if (KEY_DOWN_NOW(BUTTON_A))
+		if (tecla_presionada == BUTTON_A)
 		{
 			send(pid_proceso2, BUTTON_A);
 		}
 		// go back to title screen if select button is pressed
-		if (KEY_DOWN_NOW(BUTTON_SELECT))
+		if (tecla_presionada == BUTTON_SELECT)
 		{
 			send(pid_proceso5, BUTTON_SELECT);
 		}
 	}
+	close(KEYBOARD);
 }
 
 // proceso 2
@@ -350,13 +356,16 @@ int galaga(void)
 			shoots[i] = 0;
 		}
 
+		open(KEYBOARD, 0, 0);
 		while (1)
 		{
-			if (KEY_DOWN_NOW(BUTTON_START))
+			read(KEYBOARD, &tecla_presionada, 1);
+			if (tecla_presionada == BUTTON_START)
 			{
 				break;
 			}
 		}
+		close(KEYBOARD);
 
 		// start black screen for drawing
 		drawBlackScreen();
@@ -421,10 +430,12 @@ void endGame()
 	waitForVBlank();
 	sleepms(1000);
 
+	open(KEYBOARD, 0, 0);
 	while (1)
 	{
+		read(KEYBOARD, &tecla_presionada, 1);
 		// enter presionado
-		if (KEY_DOWN_NOW(BUTTON_START))
+		if (tecla_presionada == BUTTON_START)
 		{
 			send(pid_galaga, CONTINUAR);
 			continuar = CONTINUAR;
@@ -432,7 +443,7 @@ void endGame()
 			break;
 		}
 		// escape precionado
-		if (KEY_DOWN_NOW(BUTTON_SELECT))
+		if (tecla_presionada == BUTTON_SELECT)
 		{
 			drawBlackScreen();
 			continuar = FINALIZAR;
@@ -440,6 +451,7 @@ void endGame()
 			break;
 		}
 	}
+	close(KEYBOARD);
 }
 
 void drawBlackScreen(void)
