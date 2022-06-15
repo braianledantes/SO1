@@ -8,7 +8,7 @@ int vidas = 5;
 int restante = 8;
 char c;
 
-sid32 mutex, entrada, computar, terminar;
+sid32 mutex, entrada, computar, sem_cont;
 
 void p1(void), p2(void), p3(void), p4(void);
 pid32 pid_p1, pid_p2, pid_p3, pid_p4;
@@ -18,7 +18,7 @@ void ahorcadoparcial()
 	entrada = semcreate(1);
 	computar = semcreate(0);
 	mutex = semcreate(1);
-	terminar = semcreate(0);
+	sem_cont = semcreate(0);
 
 	pid_p1 = create(p1, 1024, 20, "p1", 0);
 	pid_p2 = create(p2, 1024, 20, "p2", 0);
@@ -33,7 +33,7 @@ void ahorcadoparcial()
 	resume(pid_p3);
 	resume(pid_p4);
 
-	wait(terminar);
+	wait(sem_cont);
 
 	control(0, TC_MODEC, 0, 0);
 }
@@ -114,5 +114,5 @@ void p4()
 	kill(pid_p2);
 	kill(pid_p3);
 
-	signal(terminar);
+	signal(sem_cont);
 }
