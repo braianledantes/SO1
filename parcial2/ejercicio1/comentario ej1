@@ -1,0 +1,4 @@
+Para ejecutar el programa usar el comando $parcial2 en la shell, el resultado lo muestra en la pantalla VGA.
+
+Mi solucion funciona correctamente siempre y cuando las teclas precionadas no se presionan muy rapidamente seguidas,
+de lo contrario se traba el kdb por alguna razon que desconozco.

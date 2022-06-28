@@ -1,0 +1,14 @@
+braianledantes@aula3-cpu18:~/Desktop/SO1-main/parcial2/ejercicio2$ cat /proc/9949/maps
+00400000-004b2000 r-xp 00000000 00:2c 1199081510                         /export/home/braianledantes/Desktop/SO1-main/parcial2/ejercicio2/ej2
+006b1000-006b4000 rw-p 000b1000 00:2c 1199081510                         /export/home/braianledantes/Desktop/SO1-main/parcial2/ejercicio2/ej2
+006b4000-006b6000 rw-p 00000000 00:00 0 
+020d3000-020f6000 rw-p 00000000 00:00 0                                  [heap]
+7fc6bf0bb000-7fc6bf119000 rw-p 00000000 00:00 0 
+7ffd54263000-7ffd54284000 rw-p 00000000 00:00 0                          [stack]
+7ffd542e6000-7ffd542e8000 r--p 00000000 00:00 0                          [vvar]
+7ffd542e8000-7ffd542ea000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+
+
+RTA: Las direcciones del segmento que el SO reservó al programa son están desde la posición 34418688 hasta la 34562048 pertenecientes al heap en decimal.
