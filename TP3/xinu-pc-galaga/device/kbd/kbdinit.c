@@ -4,8 +4,6 @@
 
 unsigned char kblayout [128];  // { ... } Fill your layout yourself 
 
-struct kbd_data kbd;
-
 void keyboard_wait(byte a_type) //unsigned char
 {
   int _time_out=100000; //unsigned int

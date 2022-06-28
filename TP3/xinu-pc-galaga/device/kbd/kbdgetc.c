@@ -1,7 +1,5 @@
 #include <xinu.h>
 
-struct kbd_data kbd;
-
 unsigned char kbdgetc(
     struct	dentry	*devptr		/* no lo usamos :(	*/
 )

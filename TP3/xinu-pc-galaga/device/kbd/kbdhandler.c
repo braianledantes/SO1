@@ -4,8 +4,6 @@
 
 #include <xinu.h>
 
-struct kbd_data kbd;
-
 unsigned char tecla_actual;
 
 unsigned char get_scancode()
